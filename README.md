@@ -1,4 +1,3 @@
-# Grupo41
 import heapq
 
 # Definir los pasos de inspección y sus costos (tiempo en segundos, por ejemplo)
@@ -29,11 +28,16 @@ def a_star(INSPECCIONES, inicio, meta):
         # Si alcanzamos el estado "meta", reconstruimos el camino
         if estado_actual == meta:
             ruta = []
+            costos = []
             while estado_actual in recorrido:
                 ruta.append(estado_actual)
+                costos.append(costo_acumulado[estado_actual])
                 estado_actual = recorrido[estado_actual]
+            ruta.append(estado_actual)  # Agregar el nodo inicial
+            costos.append(costo_acumulado[estado_actual])  # Agregar el costo inicial
             ruta.reverse()
-            return ruta
+            costos.reverse()
+            return ruta, costos
 
         # Expandir las inspecciones posibles desde el estado actual
         for inspeccion, costo in INSPECCIONES.get(estado_actual, []):
@@ -46,15 +50,15 @@ def a_star(INSPECCIONES, inicio, meta):
                 f = nuevo_costo + heuristica(inspeccion, meta)
                 heapq.heappush(abiertos, (f, nuevo_costo, inspeccion))
 
-    return None
+    return None, None
 
 # Ejecutar el algoritmo A*
-ruta_optima = a_star(INSPECCIONES, 'inicio', 'meta')
+ruta_optima, costos_optimos = a_star(INSPECCIONES, 'inicio', 'meta')
 
 # Mostrar el resultado
 if ruta_optima:
-    print("Ruta óptima de inspección:")
-    for paso in ruta_optima:
-        print(paso)
+    print("Ruta óptima de inspección con costos:")
+    for paso, costo in zip(ruta_optima, costos_optimos):
+        print(f"{paso} (Costo acumulado: {costo})")
 else:
     print("No se encontró una ruta.")
